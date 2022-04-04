@@ -7,7 +7,7 @@
 read_metadata(url, output = c("list", "data.frame"), force = FALSE)
 }
 \arguments{
-\item{url}{charcter url of website}
+\item{url}{charcter url of website, or path to html document}
 
 \item{output}{character defining desired output type. Must be one of:
 \itemize{
