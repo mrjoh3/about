@@ -3,7 +3,7 @@
 
 #' @title Read Website Metadata
 #'
-#' @param url charcter url of website
+#' @param url charcter url of website, or path to html document
 #' @param output character defining desired output type. Must be one of:
 #' \itemize{
 #'   \item(list)
