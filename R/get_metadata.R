@@ -13,6 +13,12 @@
 #' authorise scraping. This option should only be used if you are
 #' the owner of the site.
 #'
+#' @import rvest
+#' @import httr
+#' @import purrr
+#' @import dplyr
+#' @importFrom robotstxt paths_allowed
+#'
 #' @return list or data.frame
 #' @export
 #'
@@ -51,9 +57,9 @@ read_metadata <- function(url, output = c('list','data.frame'), force = FALSE){
 
   metadata <- map_dfr(c('property', 'name'), function(tag){
     nodes |>
-      map_dfr(~ tibble(property = html_attr(.x, tag),
+      map_dfr(~ dplyr::tibble(property = html_attr(.x, tag),
                        content = html_attr(.x, 'content'))) |>
-      filter(!is.na(property))
+      dplyr::filter(!is.na(property))
   })
 
   # check for a title tag
