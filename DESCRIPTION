@@ -18,6 +18,7 @@ Imports:
     httr,
     purrr,
     rmarkdown,
+    robotstxt,
     rvest,
     uuid,
     yaml
