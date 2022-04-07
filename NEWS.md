@@ -1,3 +1,4 @@
 # about 0.1.0
 
-* Added a `NEWS.md` file to track changes to the package.
+* Basic function to import metadata from a website
+* Basic function to add arbitrary metadata to a new Rmd or qmd file
