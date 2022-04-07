@@ -6,11 +6,18 @@
 #' @param .fun
 #' @param ... arbitrary metadata added to yaml header
 #'
+#' @import rmarkdown
+#' @import yaml
+#' @import rstudioapi
+#' @importFrom glue glue
+#' @importFrom uuid UUIDgenerate
+#'
+#'
 #' @return
 #' @export
 #'
 #' @examples
-create_rmd <- function(title, .fun = NULL, ...) {
+create_document <- function(title, .fun = NULL, ...) {
 
   # build filename ??  distill already does this
   slug <- gsub('[[:punct:]]', '', title)
@@ -20,15 +27,20 @@ create_rmd <- function(title, .fun = NULL, ...) {
   filename <- paste0(format(Sys.Date(), '%Y-%m-%d'),
                      '-',
                      slug,
-                     '.Rmd')
+                     ifelse(.fun == 'quarto',
+                            '.qmd',
+                            '.Rmd'))
 
   # get all files in wd
   old_files <- list.files(pattern = '.rmd', recursive = TRUE, ignore.case = TRUE)
 
   if (is.null(.fun)) {
-    rmarkdown::draft(filename, edit = FALSE, ...)
+    rmarkdown::draft(filename, edit = FALSE) #, ...)
+  } else if (.fun == 'quarto') {
+    # write function to create empty quarto with min yaml
+    quarto_new(filename, title)
   } else {
-    do.call(.fun, args = list(title = title, ...))
+    do.call(.fun, args = list(title = title)) #, ...))
   }
 
   # wait for render.
@@ -62,10 +74,13 @@ create_rmd <- function(title, .fun = NULL, ...) {
   }
 
   # add arbitrary metadata here
-  md <- c(md, ...)
+  md <- c(md, list(...))
 
   writeLines(c(paste0("---\n",
-                      yaml::as.yaml(md),
+                      yaml::as.yaml(md,
+                                    omap = TRUE,
+                                    indent = 2,
+                                    indent.mapping.sequence = TRUE),
                       "---"),
                "\n\n",
                doc[(yaml_delimiters[2] + 1):length(doc)]),
@@ -76,4 +91,11 @@ create_rmd <- function(title, .fun = NULL, ...) {
   else utils::file.edit(new_file)
 
   invisible(new_file)
+}
+
+
+quarto_new <- function(filename, title){
+  template <- readLines(system.file('templates/basic_quarto.qmd', package = 'about'))
+  template[2] <- glue::glue('title: {title}')
+  writeLines(template, filename)
 }
