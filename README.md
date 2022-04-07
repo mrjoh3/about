@@ -9,7 +9,10 @@
 coverage](https://codecov.io/gh/mrjoh3/about/branch/main/graph/badge.svg)](https://app.codecov.io/gh/mrjoh3/about?branch=main)
 <!-- badges: end -->
 
-The goal of about is to …
+The purpose of about is to read and write metadata. Specifically it can
+read the metadata from any webpage and it can write arbitrary metadata
+to the `YAML` header of an [Rmarkdown](https://rmarkdown.rstudio.com/)
+or [Quarto](https://quarto.org/) file.
 
 ## Installation
 
@@ -23,36 +26,44 @@ devtools::install_github("mrjoh3/about")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+### Reading Metadata from a URL
 
 ``` r
-#library(about)
-## basic example code
+library(about)
+
+read_metadata('https://www.w3.org/', output = 'data.frame')
+#> # A tibble: 3 × 2
+#>   property    content                                                           
+#>   <chr>       <chr>                                                             
+#> 1 viewport    width=device-width                                                
+#> 2 description The World Wide Web Consortium (W3C) is an international community…
+#> 3 og:title    World Wide Web Consortium (W3C)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+### Adding Metadata to the YAML Header
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+create_document(
+  title = 'My New Quarto with Metadata', 
+  .fun = 'quarto', 
+  security = 'confidential', 
+  categories = c('metadata','create')
+)
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+The code above will create a new Quarto file with the following yaml
+header:
 
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+``` yaml
+---
+title: My New Quarto with Metadata
+format: html
+editor: visual
+uuid: a5b32d65-cf7a-4d1b-a996-5d22f4d65359
+draft: yes
+security: confidential
+categories:
+  - metadata
+  - create
+---
+```
